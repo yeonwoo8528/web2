@@ -1,8 +1,19 @@
 import './App.css';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import axios from 'axios';
+
+function Main() {
+  return (
+    <>
+      <h2>마이페이지</h2>
+      <Link to="/login">로그인</Link>
+    </>
+  );
+}
 
 function Login(props) {
+  const navigate = useNavigate();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   
@@ -10,10 +21,10 @@ function Login(props) {
     <h2>로그인</h2>
 
     <div className="form">
-      <p><input className="login" type="text" name="id" placeholder="아이디" onChange={event => {
+      <p><input className="login" type="text" name="username" placeholder="아이디" onChange={event => {
         setId(event.target.value);
       }} /></p>
-      <p><input className="login" type="password" name="password" placeholder="비밀번호" onChange={event => {
+      <p><input className="login" type="password" name="pwd" placeholder="비밀번호" onChange={event => {
         setPassword(event.target.value);
       }} /></p>
 
@@ -22,33 +33,32 @@ function Login(props) {
           userId: id,
           userPassword: password,
         };
-        fetch("http://localhost:3001/login", { //auth 주소에서 받을 예정
-          method: "post", // method :통신방법
-          headers: {      // headers: API 응답에 대한 정보를 담음
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(userData), //userData라는 객체를 보냄
-        })
-          .then((res) => res.json())
-          .then((json) => {            
+        axios.post("http://localhost:3001/login", userData)
+          .then((response) => {
+            console.log("data: ", response.data);
+            const json = response.data;       
             if(json.isLogin==="True"){
-              props.setMode("WELCOME");
+              navigate('/welcome');
             }
             else {
               alert(json.isLogin)
             }
+          })
+          .catch((error) => {
+            console.error("Axios POST request error: ", error);
           });
       }} /></p>
     </div>
 
     <p>계정이 없으신가요?  <button onClick={() => {
-      props.setMode("SIGNIN");
+      navigate('/signin');
     }}>회원가입</button></p>
   </> 
 }
 
 
 function Signin(props) {
+  const navigate = useNavigate();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -73,70 +83,67 @@ function Signin(props) {
           userPassword: password,
           userPassword2: password2,
         };
-        fetch("http://localhost:3001/signin", { //signin 주소에서 받을 예정
-          method: "post", // method :통신방법
-          headers: {      // headers: API 응답에 대한 정보를 담음
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(userData), //userData라는 객체를 보냄
-        })
-          .then((res) => res.json())
-          .then((json) => {
+        axios.post("http://localhost:3001/signin", userData)
+          .then((response) => {
+            const json = response.data;
             if(json.isSuccess==="True"){
               alert('회원가입이 완료되었습니다!')
-              props.setMode("LOGIN");
+              navigate('/login');
             }
             else{
               alert(json.isSuccess)
             }
+          })
+          .catch((error) => {
+            console.error("Axios POST request error: ", error);
           });
       }} /></p>
     </div>
 
     <p>로그인화면으로 돌아가기  <button onClick={() => {
-      props.setMode("LOGIN");
+      navigate('/login');
     }}>로그인</button></p>
   </> 
 }
 
-function App() {
-  const [mode, setMode] = useState("");
+function Welcome() {
+  return (
+    <>
+      <h2>메인 페이지에 오신 것을 환영합니다</h2>
+      <p>로그인에 성공하셨습니다.</p>
+      <Link to="/">로그인</Link>
+    </>
+  );
+}
 
+function App() {
   useEffect(() => {
-    fetch("http://localhost:3001/authcheck")
-      .then((res) => res.json())
-      .then((json) => {        
+    axios.post('http://localhost:3001/authcheck')
+      .then(response => {
+        const json = response.data;  
         if (json.isLogin === "True") {
-          setMode("WELCOME");
+          window.location.replace('/welcome');
         }
         else {
-          setMode("LOGIN");
+          window.location.replace('/login');
         }
+      })
+      .catch(error => {
+        console.error('Error checking authentication:', error);
       });
   }, []); 
 
-  let content = null;  
-
-  if(mode==="LOGIN"){
-    content = <Login setMode={setMode}></Login> 
-  }
-  else if (mode === 'SIGNIN') {
-    content = <Signin setMode={setMode}></Signin> 
-  }
-  else if (mode === 'WELCOME') {
-    content = <>
-    <h2>메인 페이지에 오신 것을 환영합니다</h2>
-    <p>로그인에 성공하셨습니다.</p> 
-    <a href="/logout">로그아웃</a>   
-    </>
-  }
-
   return (
-    <>
+    <BrowserRouter>
       <div className="background">
-        {content}
+        <Routes>
+          <Route path='/' element={<Main />}></Route>
+          <Route path='/login' element={<Login />}></Route>
+          <Route path='/signin' element={<Signin />}></Route>
+          <Route path='/welcome' element={<Welcome />}></Route>
+        </Routes>
       </div>
-    </>
+    </BrowserRouter>
   );
 }
 
