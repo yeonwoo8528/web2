@@ -2,9 +2,8 @@
 
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: rgb(150, 209, 148);
+  background-color: rgb(104, 142, 212);
   margin: 50px;
-
 }
 
 .background {
@@ -42,9 +41,25 @@ body {
   border-bottom-color: rgb(68, 112, 67);
 }
 
+.link-gap {
+  margin: 0 10px;
+}
+
+.input {
+  width: 75%;
+  border: none;
+  transition: .2s;
+}
+
+.input:active,
+.input:focus,
+.input:hover {
+  outline: none;
+}
+
 .btn {
   border: none;
-  width: 75%;
+  width: 100%;
   background-color: rgb(68, 112, 67);
   color: white;
   padding: 15px 0;
@@ -56,4 +71,60 @@ body {
 
 .btn:hover {
   background-color: rgb(49, 82, 48);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+strong {
+  margin-right: 10px;
+}
+
+.comment-container {
+  width: 80%;
+  margin: auto;
+}
+
+.comment-heading {
+  font-size: 1.5rem;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+}
+
+.comment-item {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.comment-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.comment-input {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.comment-btn {
+  font-size: 0.9rem;
+  padding: 8px 16px;
 }
