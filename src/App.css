@@ -38,7 +38,7 @@ body {
 .login:focus,
 .login:hover {
   outline: none;
-  border-bottom-color: rgb(68, 112, 67);
+  border-bottom-color: rgb(65, 92, 141);
 }
 
 .link-gap {
@@ -60,7 +60,7 @@ body {
 .btn {
   border: none;
   width: 100%;
-  background-color: rgb(68, 112, 67);
+  background-color: rgb(65, 92, 141);
   color: white;
   padding: 15px 0;
   font-weight: 600;
@@ -70,7 +70,7 @@ body {
 }
 
 .btn:hover {
-  background-color: rgb(49, 82, 48);
+  background-color: rgb(65, 92, 141);
 }
 
 ul {
