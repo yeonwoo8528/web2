@@ -273,6 +273,8 @@ function Comment() {
   const [postContent, setPostContent] = useState('');
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
 
   useEffect(() => {
     axios.get(`http://localhost:3001/comments/${postId}`)
@@ -280,6 +282,7 @@ function Comment() {
         const json = response.data;
         setPostContent(json.postContent || '');
         setComments(json.comment || []);
+        setLikes(json.likes || 0);
       })
       .catch(error => {
         console.error('Error fetching comments:', error);
@@ -302,11 +305,44 @@ function Comment() {
       });
   };
 
+  useEffect(() => {
+    axios.get(`http://localhost:3001/comments/${postId}/like`)
+      .then(response => {
+        const json = response.data;
+        setIsLiked(json.isLiked);
+      })
+      .catch(error => {
+        console.error('Error checking likes:', error);
+      });
+  }, [postId]);
+
+  const handleLike = () => {
+    axios.post(`http://localhost:3001/comments/${postId}/like`)
+      .then(response => {
+        const json = response.data;
+        if (json.isSuccess) {
+          setLikes(json.likes);
+          setIsLiked(true);
+        } else {
+          alert(json.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error adding likes:', error);
+      });
+  };
+
   return (
     <div className="comment-container">
       <Link to="/boards">게시글 목록</Link>
       <p className="post-content" style={{ fontSize: '25px' }}>{postContent}</p>
-      <h2 style={{ fontSize: '1rem' }} className="comment-heading">댓글</h2>
+      <div className="like-section">
+        <button className="like-btn" onClick={handleLike}>게시글 추천</button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <h2 style={{ fontSize: '1rem', textAlign: 'left' }}>댓글</h2>
+        <span style={{ fontSize: '1rem', textAlign: 'right' }}>좋아요: {likes}</span>
+      </div>
       <ul className="comment-list">
         {comments.map((comment, index) => (
           <li key={index} className="comment-item">{comment.writer}: {comment.comment}</li>

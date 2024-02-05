@@ -195,7 +195,7 @@ app.delete('/posts', (req, res) => {
 app.get('/comments/:postId', (req, res) => {
     const postId = req.params.postId;
     const commentsQuery = `
-        SELECT posts.content, comments.writer, comments.comment
+        SELECT posts.content, posts.likes, comments.writer, comments.comment
         FROM posts LEFT JOIN comments ON posts.idx = comments.postId
         WHERE posts.idx = ?`;
     db.query(commentsQuery, [postId], (error, results, fields) => {
@@ -205,11 +205,12 @@ app.get('/comments/:postId', (req, res) => {
         }
         else {
             const postContent = results.length > 0 ? results[0].content : '';
+            const likes = results.length > 0 ? results[0].likes : 0;
             const commentsData = results.map((comment) => ({
                 writer: comment.writer,
                 comment: comment.comment,
             }));
-            res.send({ postContent, comment: commentsData });
+            res.send({ postContent, likes, comment: commentsData });
         }
     }
     );
@@ -226,6 +227,63 @@ app.post('/comments/:postId', (req, res) => {
             res.status(500).send('Internal Server Error');
         } else {
             res.json({ isSuccess: true, writer: writer });
+        }
+    });
+});
+
+app.get('/comments/:postId/like', (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.session.nickname;
+
+    db.query('SELECT * FROM likes WHERE postId = ? AND userId = ?', [postId, userId], (error, results) => {
+        if (error) {
+            console.error('Error checking likes:', error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            const isLiked = results.length > 0;
+            res.json({ isLiked });
+        }
+    });
+});
+
+app.post('/comments/:postId/like', (req, res) => {
+    const userId = req.session.nickname;
+    const postId = req.params.postId;
+
+    // 좋아요를 누를 때 동작
+    db.query('SELECT * FROM likes WHERE postId = ? AND userId = ?', [postId, userId], (error, results) => {
+        if (error) {
+            console.error('Error checking likes:', error);
+            res.status(500).send('Internal Server Error');
+        } else if (results.length > 0) {
+            // 이미 좋아요를 눌렀을 경우
+            res.json({ isSuccess: false, message: '이미 좋아요한 게시물입니다!' });
+        } else {
+            // 좋아요를 추가하고 좋아요 수를 증가시킴
+            db.query('INSERT INTO likes (postId, userId) VALUES (?, ?)', [postId, userId], (error, results) => {
+                if (error) {
+                    console.error('Error adding likes:', error);
+                    res.status(500).send('Internal Server Error');
+                } else {
+                    db.query('UPDATE posts SET likes = likes + 1 WHERE idx = ?', [postId], (error, results) => {
+                        if (error) {
+                            console.error('Error updating likes:', error);
+                            res.status(500).send('Internal Server Error');
+                        } else {
+                            // 증가된 좋아요 수를 응답에 포함하여 전송
+                            db.query('SELECT likes FROM posts WHERE idx = ?', [postId], (error, results) => {
+                                if (error) {
+                                    console.error('Error retrieving updated likes:', error);
+                                    res.status(500).send('Internal Server Error');
+                                } else {
+                                    const updatedLikes = results[0].likes;
+                                    res.json({ isSuccess: true, likes: updatedLikes });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         }
     });
 });
