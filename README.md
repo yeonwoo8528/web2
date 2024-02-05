@@ -1,70 +1,63 @@
-# Getting Started with Create React App
+# React / Express / Mysql 을 활용한 SNS Web application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 프로젝트 제작 인원
+- 김연우 : 라우팅 구현, 댓글 달기 구현
+- 장현민 : 마이페이지, 게시글 작성 구현
+- 로그인, 회원가입, CSS파일 작성은 같이 진행
+- 추가로 좋아요 기능 구현
 
-## Available Scripts
+### 개발 환경
 
-In the project directory, you can run:
+- React
+- Express.js
+- DB : Mysql
 
-### `npm start`
+## 서버 : server.js
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 주요 의존성 : 
+- [Express](https://expressjs.com/): Node.js를 위한 웹 프레임워크
+- [express-session](https://www.npmjs.com/package/express-session): 사용자 세션 관리 미들웨어
+- [express-mysql-session](https://www.npmjs.com/package/express-mysql-session): MySQL을 위한 Express 세션 저장소
+- [cors](https://www.npmjs.com/package/cors): Cross-Origin Resource Sharing을 활성화하기 위한 미들웨어
+- [body-parser](https://www.npmjs.com/package/body-parser): 들어오는 요청 본문을 구문 분석하는 미들웨어
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 주요 엔드포인트 :
 
-### `npm test`
+- `/login`: 사용자 로그인 처리
+- `/signin`: 사용자 회원가입 처리
+- `/userdata`: 로그인한 사용자의 데이터 및 작성한 게시글 조회
+- `/boards`: 모든 게시글 및 작성자 조회
+- `/posts`: 게시글 작성 및 삭제 모든 게시글 조회
+- `/comments/:postId`: 특정 게시글에 대한 댓글 조회 및 작성과 좋아요
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 클라이언트 : App.js
 
-### `npm run build`
+### 주요 컴포넌트:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- `Main`: 홈페이지 및 로그인, 회원가입 링크 제공
+- `Login`: 사용자 로그인 폼 
+- `Signin`: 사용자 회원가입 폼
+- `Welcome`: 로그인 후 메인 페이지, 게시글 조회 및 로그아웃 기능 제공
+- `Board`: 모든 게시글 조회 페이지
+- `Post`: 게시글 작성 폼
+- `Comment`: 특정 게시글에 대한 댓글 조회 및 작성 기능과 좋아요 기능 제공
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## DB : Mysql
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Table 구성
 
-### `npm run eject`
+- firstmysql : id, password, name
+- posts : idx, id, content, likes
+- comments : idx, postId, writer, comment
+- likes : idx, postId, userId
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 빌드 방법
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `npm run build`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 실행 방법
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. 서버 실행: `node server.js`
+2. 클라이언트 실행: `npm start`
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[웹사이트 동작 영상 바로가기](https://youtu.be/TK_M_lgHN4Q)
