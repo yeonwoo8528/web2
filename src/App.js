@@ -1,3 +1,4 @@
+import likesImage from './likes.png';
 import './App.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';
@@ -269,11 +270,17 @@ function Post() {
 }
 
 function Comment() {
+
+  const navigate = useNavigate();
+
+  const handleMypage = () => {
+    navigate('/boards');
+  }
+
   const { postId } = useParams();
   const [postContent, setPostContent] = useState('');
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
@@ -309,7 +316,6 @@ function Comment() {
     axios.get(`http://localhost:3001/comments/${postId}/like`)
       .then(response => {
         const json = response.data;
-        setIsLiked(json.isLiked);
       })
       .catch(error => {
         console.error('Error checking likes:', error);
@@ -322,7 +328,6 @@ function Comment() {
         const json = response.data;
         if (json.isSuccess) {
           setLikes(json.likes);
-          setIsLiked(true);
         } else {
           alert(json.message);
         }
@@ -334,14 +339,12 @@ function Comment() {
 
   return (
     <div className="comment-container">
-      <Link to="/boards">게시글 목록</Link>
       <p className="post-content" style={{ fontSize: '25px' }}>{postContent}</p>
-      <div className="like-section">
-        <button className="like-btn" onClick={handleLike}>게시글 추천</button>
-      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h2 style={{ fontSize: '1rem', textAlign: 'left' }}>댓글</h2>
-        <span style={{ fontSize: '1rem', textAlign: 'right' }}>좋아요: {likes}</span>
+        <span style={{ fontSize: '1rem', textAlign: 'right', cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={handleLike}>
+          <img src={likesImage} alt="좋아요 아이콘" style={{ width: '40px', height: '40px', marginRight: '5px' }} /> : {likes}
+        </span>
       </div>
       <ul className="comment-list">
         {comments.map((comment, index) => (
@@ -352,6 +355,7 @@ function Comment() {
         <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} className="comment-input"></textarea>
         <button className="comment-btn" onClick={handleSubmitComment}>댓글 작성</button>
       </div>
+      <button className="comment-btn" onClick={handleMypage}>목록</button>
     </div>
   );
 }

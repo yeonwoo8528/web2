@@ -28,7 +28,8 @@
 - `/userdata`: 로그인한 사용자의 데이터 및 작성한 게시글 조회
 - `/boards`: 모든 게시글 및 작성자 조회
 - `/posts`: 게시글 작성 및 삭제 모든 게시글 조회
-- `/comments/:postId`: 특정 게시글에 대한 댓글 조회 및 작성과 좋아요
+- `/comments/:postId`: 특정 게시글에 대한 댓글 조회 및 작성
+- `/comments/:postId/like`: 특정 게시글에 대한 좋아요 기능 처리
 
 ## 클라이언트 : App.js
 
@@ -62,4 +63,4 @@
 
 ## 동작 영상
 
-[웹사이트 동작 영상 바로가기](https://youtu.be/TK_M_lgHN4Q)
+[웹사이트 동작 영상 바로가기](https://youtu.be/JhFfv6x0xxg)
